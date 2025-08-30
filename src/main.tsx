@@ -8,6 +8,7 @@ import { Provider } from "./provider.tsx";
 
 import "@/styles/globals.css";
 import { NotificationProvider } from "./hooks/useNotifications.tsx";
+import ScrollToTop from "./components/ScrollToTop.tsx";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <NotificationProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Provider>
           <QueryClientProvider client={queryClient}>
             <App />
