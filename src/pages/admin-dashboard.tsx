@@ -496,8 +496,8 @@ export default function AdminDashboardPage() {
                         key={user.id}
                         className="group bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50"
                       >
-                        <CardContent className="md:p-6 p-2">
-                          <div className="flex items-center justify-between md:flex-row flex-col ">
+                        <CardContent className="p-6">
+                          <div className="flex items-start md:items-center justify-between md:flex-row flex-col gap-3">
                             <div className="flex items-center gap-4">
                               <div className="hidden w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full md:flex items-center justify-center">
                                 <Icon
@@ -706,7 +706,7 @@ export default function AdminDashboardPage() {
                         key={project.id}
                         className="group bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50"
                       >
-                        <CardContent className="md:p-6 p-2">
+                        <CardContent className="p-6">
                           <div className="flex items-start gap-4">
                             <div className="hidden w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg md:flex items-center justify-center flex-shrink-0 mt-1">
                               <Icon
@@ -732,7 +732,7 @@ export default function AdminDashboardPage() {
                                     {project.approvalStatus}
                                   </Badge>
                                 </div>
-                                <p className="text-default-600 text-sm line-clamp-2 mb-2">
+                                <p className="text-default-600 text-sm line-clamp-2 my-2">
                                   {project.description}
                                 </p>
                                 <Button
@@ -813,6 +813,7 @@ export default function AdminDashboardPage() {
             </DialogHeader>
             <DialogFooter>
               <Button
+                className="mb-4"
                 variant="outline"
                 onClick={() => setIsDeleteUserDialogOpen(false)}
               >
@@ -849,6 +850,7 @@ export default function AdminDashboardPage() {
               <Button
                 variant="outline"
                 onClick={() => setIsDeleteProjectDialogOpen(false)}
+                className="mb-4"
               >
                 Cancel
               </Button>
@@ -889,6 +891,7 @@ export default function AdminDashboardPage() {
               <Button
                 variant="outline"
                 onClick={() => setIsRoleDialogOpen(false)}
+                className="mb-4"
               >
                 Cancel
               </Button>
