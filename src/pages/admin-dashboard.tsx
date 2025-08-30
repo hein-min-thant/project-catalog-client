@@ -496,10 +496,10 @@ export default function AdminDashboardPage() {
                         key={user.id}
                         className="group bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50"
                       >
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between">
+                        <CardContent className="md:p-6 p-2">
+                          <div className="flex items-center justify-between md:flex-row flex-col ">
                             <div className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
+                              <div className="hidden w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-full md:flex items-center justify-center">
                                 <Icon
                                   className="text-white text-lg"
                                   icon="mdi:account"
@@ -525,7 +525,7 @@ export default function AdminDashboardPage() {
                                 </Badge>
                               </div>
                             </div>
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className="flex gap-2">
                               <Button
                                 className="border-cyan-500 text-cyan-600 hover:bg-cyan-50 dark:hover:bg-cyan-950/50"
                                 size="sm"
@@ -539,7 +539,6 @@ export default function AdminDashboardPage() {
                                 Role
                               </Button>
                               <Button
-                                className="hover:scale-105 transition-transform"
                                 size="sm"
                                 variant="destructive"
                                 onClick={() => handleDeleteUser(user)}
@@ -707,16 +706,16 @@ export default function AdminDashboardPage() {
                         key={project.id}
                         className="group bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50"
                       >
-                        <CardContent className="p-6">
+                        <CardContent className="md:p-6 p-2">
                           <div className="flex items-start gap-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                            <div className="hidden w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-lg md:flex items-center justify-center flex-shrink-0 mt-1">
                               <Icon
                                 className="text-white text-lg"
                                 icon="mdi:folder"
                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-start md:flex-row flex-col justify-between mb-3">
                                 <div>
                                   <h3 className="font-semibold text-lg group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors line-clamp-1">
                                     {project.title}
@@ -733,8 +732,10 @@ export default function AdminDashboardPage() {
                                     {project.approvalStatus}
                                   </Badge>
                                 </div>
+                                <p className="text-default-600 text-sm line-clamp-2 mb-2">
+                                  {project.description}
+                                </p>
                                 <Button
-                                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:scale-105"
                                   size="sm"
                                   variant="destructive"
                                   onClick={() => handleDeleteProject(project)}
@@ -745,16 +746,6 @@ export default function AdminDashboardPage() {
                                   />
                                   Delete
                                 </Button>
-                              </div>
-
-                              <p className="text-default-600 text-sm line-clamp-2 mb-2">
-                                {project.description}
-                              </p>
-
-                              <div className="flex items-center gap-4 text-xs text-default-600">
-                                <span>Created by: {project.userId}</span>
-                                <span>•</span>
-                                <span>ID: {project.id}</span>
                               </div>
                             </div>
                           </div>

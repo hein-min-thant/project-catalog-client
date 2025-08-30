@@ -97,12 +97,16 @@ export const CommentSection = ({
       <CardHeader>
         <div className="flex items-center gap-3">
           <div className="p-2 bg-cyan-500/10 rounded-lg">
-            <Icon icon="mdi:comment-outline" className="text-xl text-cyan-500" />
+            <Icon
+              icon="mdi:comment-outline"
+              className="text-xl text-cyan-500"
+            />
           </div>
           <div>
             <h2 className="text-2xl font-bold">Comments</h2>
             <p className="text-sm text-default-600">
-              {comments?.length || 0} comment{(comments?.length || 0) !== 1 ? 's' : ''}
+              {comments?.length || 0} comment
+              {(comments?.length || 0) !== 1 ? "s" : ""}
             </p>
           </div>
         </div>
@@ -116,7 +120,10 @@ export const CommentSection = ({
                 <img
                   alt="Your Avatar"
                   className="h-10 w-10 flex-shrink-0 rounded-full object-cover border-2 border-cyan-200 dark:border-cyan-800"
-                  src={users.get(currentUserId)?.avatarUrl || "https://static.vecteezy.com/system/resources/thumbnails/021/548/095/small/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"}
+                  src={
+                    users.get(currentUserId)?.avatarUrl ||
+                    "https://static.vecteezy.com/system/resources/thumbnails/021/548/095/small/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"
+                  }
                 />
                 <div className="flex-1 space-y-3">
                   <textarea
@@ -134,12 +141,17 @@ export const CommentSection = ({
                     <Button
                       type="submit"
                       size="sm"
-                      disabled={addCommentMutation.isPending || !newComment.trim()}
+                      disabled={
+                        addCommentMutation.isPending || !newComment.trim()
+                      }
                       className="bg-cyan-500 hover:bg-cyan-600 text-white"
                     >
                       {addCommentMutation.isPending ? (
                         <>
-                          <Icon icon="mdi:loading" className="mr-1 animate-spin" />
+                          <Icon
+                            icon="mdi:loading"
+                            className="mr-1 animate-spin"
+                          />
                           Posting...
                         </>
                       ) : (
@@ -169,10 +181,17 @@ export const CommentSection = ({
             <Card className="bg-gray-50/50 dark:bg-gray-900/50 border-dashed">
               <CardContent className="text-center py-8">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                  <Icon icon="mdi:comment-outline" className="text-2xl text-gray-600 dark:text-gray-400" />
+                  <Icon
+                    icon="mdi:comment-outline"
+                    className="text-2xl text-gray-600 dark:text-gray-400"
+                  />
                 </div>
-                <h3 className="font-semibold text-foreground mb-2">No comments yet</h3>
-                <p className="text-sm text-default-600">Be the first to share your thoughts about this project!</p>
+                <h3 className="font-semibold text-foreground mb-2">
+                  No comments yet
+                </h3>
+                <p className="text-sm text-default-600">
+                  Be the first to share your thoughts about this project!
+                </p>
               </CardContent>
             </Card>
           )}
@@ -182,9 +201,14 @@ export const CommentSection = ({
             const isOwnComment = comment.userId === currentUserId;
 
             return (
-              <Card key={comment.id} className={`bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50 ${
-                isOwnComment ? 'border-cyan-200 dark:border-cyan-800' : 'border-border'
-              }`}>
+              <Card
+                key={comment.id}
+                className={`bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50 ${
+                  isOwnComment
+                    ? "border-cyan-200 dark:border-cyan-800"
+                    : "border-border"
+                }`}
+              >
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <img
@@ -195,7 +219,7 @@ export const CommentSection = ({
                         "https://static.vecteezy.com/system/resources/thumbnails/021/548/095/small/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"
                       }
                     />
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
@@ -203,17 +227,23 @@ export const CommentSection = ({
                             {user?.name || "Unknown User"}
                           </span>
                           {isOwnComment && (
-                            <Badge variant="outline" className="text-xs bg-cyan-500/10 text-cyan-600 border-cyan-500/20">
+                            <Badge
+                              variant="outline"
+                              className="text-xs bg-cyan-500/10 text-cyan-600 border-cyan-500/20"
+                            >
                               You
                             </Badge>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
                           <time className="text-xs text-default-600">
-                            {format(new Date(comment.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                            {format(
+                              new Date(comment.createdAt),
+                              "MMM d, yyyy 'at' h:mm a"
+                            )}
                           </time>
-                          
+
                           {isOwnComment && (
                             <Button
                               size="sm"
@@ -222,12 +252,15 @@ export const CommentSection = ({
                               disabled={deleteCommentMutation.isPending}
                               className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/50 p-1 h-auto"
                             >
-                              <Icon icon="mdi:delete-outline" className="h-4 w-4" />
+                              <Icon
+                                icon="mdi:delete-outline"
+                                className="h-4 w-4"
+                              />
                             </Button>
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <p className="text-sm leading-relaxed text-foreground">
                           {comment.comment}

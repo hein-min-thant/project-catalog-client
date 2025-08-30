@@ -170,7 +170,7 @@ export default function ProjectDetailPage() {
             isChatOpen ? "lg:pr-[10rem] xl:pr-[15rem]" : ""
           }`}
         >
-          <div className="max-w-5xl p-4 md:p-6 lg:p-8 mx-auto">
+          <div className="max-w-5xl p-2 md:p-6 lg:p-8 mx-auto">
             <div className="space-y-8">
               {/* Header Section */}
               {/* Breadcrumbs and Badges */}
@@ -386,7 +386,7 @@ export default function ProjectDetailPage() {
                       <h2 className="text-2xl font-bold">Detailed Report</h2>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="px-2">
                     <Separator className="mb-6" />
                     <div
                       dangerouslySetInnerHTML={{ __html: project.body }}
@@ -409,7 +409,7 @@ export default function ProjectDetailPage() {
 
         {/* Left Side - Action Buttons */}
         {currentUser && (
-          <div className="fixed bottom-6 left-6 z-40 flex flex-col gap-3">
+          <div className="fixed bottom-3 md:bottom-6 left-6 z-40 flex md:flex-col flex-row gap-3 md:w-20">
             {/* Save Button - Yellow Color */}
 
             <div className="">
@@ -417,10 +417,10 @@ export default function ProjectDetailPage() {
             </div>
             <Button
               size="lg"
-              className={` p-0 shadow-lg transition-all duration-300 rounded-lg ${
+              className={` md:p-0 px-4 py-2 shadow-lg transition-all duration-300  rounded-lg ${
                 isSaved
                   ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                  : "bg-background hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-yellow-500 text-yellow-600 dark:text-yellow-400"
+                  : "bg-transparent backdrop-blur-3xl hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-yellow-500 text-yellow-600 dark:text-yellow-400"
               }`}
               onClick={handleSave}
             >
@@ -428,18 +428,20 @@ export default function ProjectDetailPage() {
                 className="h-5 w-5"
                 icon={isSaved ? "mdi:bookmark" : "mdi:bookmark-outline"}
               />
-              {isSaved ? "Unsave" : "Save"}
+              <span className="hidden md:block">
+                {isSaved ? "Unsave" : "Save"}
+              </span>
             </Button>
 
             {/* Edit Button */}
             {canEdit && (
               <Button
                 size="lg"
-                className="p-0 shadow-lg text-white rounded-lg"
+                className="md:p-0 px-4 py-2 shadow-lg text-white rounded-lg"
                 onClick={() => navigate(`/projects/${project.id}/edit`)}
               >
                 <Icon icon="mdi:pencil" className="h-5 w-5" />
-                Edit
+                <span className="md:block hidden">Edit</span>
               </Button>
             )}
           </div>
@@ -449,7 +451,7 @@ export default function ProjectDetailPage() {
         {currentUser && !isChatOpen && (
           <Button
             size="lg"
-            className="fixed bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-600 text-white shadow-2xl w-12 h-12 p-0 transition-all duration-500 hover:scale-110 rounded-lg"
+            className="fixed bottom-3 md:bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-600 text-white shadow-2xl w-12 h-12 p-0 transition-all duration-500 hover:scale-110 rounded-lg"
             onClick={() => setIsChatOpen(true)}
           >
             <Icon className="h-6 w-6" icon="mdi:chat" />
@@ -458,7 +460,7 @@ export default function ProjectDetailPage() {
 
         {/* Chat Sidebar - High Z-Index */}
         <aside
-          className={`fixed right-0 top-16 z-45 w-full border-l bg-background shadow-2xl lg:w-80 xl:w-[22rem] transition-transform duration-500 ease-in-out ${
+          className={`fixed right-0 md:top-16 top-0 bottom-0 z-45 w-full border-l bg-background shadow-2xl lg:w-80 xl:w-[22rem] transition-transform duration-500 ease-in-out ${
             isChatOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >

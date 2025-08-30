@@ -86,10 +86,12 @@ export const ReactionButton = ({ projectId, userId }: ReactionButtonProps) => {
       <Button
         className={`
         hover:bg-rose-300
+        px-4 py-2
         shadow-lg
         group
         relative
         flex items-center justify-center rounded-lg
+        backdrop-blur-3xl
         bg-transprent border border-rose-500
         ${isReacted ? "bg-rose-500" : ""}
       `}
@@ -113,7 +115,7 @@ export const ReactionButton = ({ projectId, userId }: ReactionButtonProps) => {
           className={`
           z-10
           text-2xl
-          transition-all duration-200 ease-in-out mr-4
+          transition-all duration-200 ease-in-out md:mr-4
           ${isReacted ? "text-white" : "text-rose-500"}
         `}
           icon={isReacted ? "mdi:heart" : "mdi:heart-outline"}
@@ -121,7 +123,7 @@ export const ReactionButton = ({ projectId, userId }: ReactionButtonProps) => {
         {totalReactions > 0 && (
           <span
             className={`
-          text-sm font-bold ${isReacted ? "text-white" : "text-rose-500"}
+          text-sm md:block hidden font-bold  ${isReacted ? "text-white" : "text-rose-500"}
         `}
           >
             {totalReactions}
