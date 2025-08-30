@@ -1,7 +1,5 @@
 // src/components/Navbar.tsx
-import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
 import {
   Navbar as HeroUINavbar,
   NavbarBrand,
@@ -26,7 +24,7 @@ import {
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, SearchIcon, Logo } from "@/components/icons";
+import { GithubIcon, Logo } from "@/components/icons";
 import { isAuthenticated } from "@/config/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
