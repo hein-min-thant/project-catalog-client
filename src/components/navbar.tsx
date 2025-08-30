@@ -203,7 +203,7 @@ export const Navbar = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="bg-background hover:bg-accent"
-                      onClick={() => navigate("/saved-project")}
+                      onClick={() => navigate("/saved-projects")}
                     >
                       <SaveIcon className="mr-2 h-4 w-4" />
                       Saved Projects
@@ -278,8 +278,6 @@ export const Navbar = () => {
 
       {/* Mobile menu drawer */}
       <NavbarMenu className="bg-card/80 backdrop-blur-md pt-4">
-        <div className="mx-4 mb-4">{searchInput}</div>
-
         {/* Mobile navigation items */}
         {siteConfig.navItems.map((item) => (
           <NavbarMenuItem key={item.href}>

@@ -31,6 +31,14 @@ export const siteConfig = {
       href: "/projects",
     },
     {
+      label: "Saved Project",
+      href: "/saved-projects",
+    },
+    {
+      label: "Saved Project",
+      href: "/notifications",
+    },
+    {
       label: "Supervisor Dashboard",
       href: "/supervisor-dashboard",
     },
