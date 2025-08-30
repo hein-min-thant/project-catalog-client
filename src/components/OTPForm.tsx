@@ -3,7 +3,7 @@ import { Loader2, ArrowLeft, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../config/api";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,12 +50,16 @@ export default function OTPForm({ email, onBack }: OTPFormProps) {
     try {
       await verifyOTP();
     } catch (error: any) {
-      alert(error.message);
+      toast("Error", {
+        description: error.message,
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
+      });
     }
   };
 
   return (
-    <Card className="w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
+    <Card className="w-full md:w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
       <CardHeader className="space-y-4 pb-6">
         <div className="flex justify-center">
           <div className="p-3 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl">

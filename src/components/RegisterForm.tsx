@@ -79,7 +79,7 @@ export default function RegisterForm({
   };
 
   return (
-    <Card className="w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
+    <Card className="w-full md:w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
       <CardHeader className="space-y-4 pb-6">
         <div className="flex justify-center">
           <div className="p-3 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 rounded-2xl">

@@ -1,4 +1,4 @@
-import { addToast } from "@heroui/react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,18 +59,18 @@ export default function VerifyForm({ email, onBack }: VerifyFormProps) {
       });
 
       if (res.status === 200 || res.status === 201) {
-        addToast({
-          title: "Success",
-          description: "Account created successfully! You can now log in.",
-          color: "success",
+        toast("Success", {
+          description: "Password changed successfully!",
+          className:
+            "bg-green-500/90 text-white dark:bg-green-600 px-4 py-3 rounded-xl shadow-lg",
         });
         navigate("/login");
       }
     } catch (err: any) {
-      addToast({
-        title: "Error",
-        description: err.response?.data?.message || "Invalid code or email",
-        color: "danger",
+      toast("Error", {
+        description: "New passwords do not match.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ export default function VerifyForm({ email, onBack }: VerifyFormProps) {
   };
 
   return (
-    <Card className="w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
+    <Card className="w-full md:w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
       <CardHeader className="space-y-4 pb-6">
         <div className="flex justify-center">
           <div className="p-3 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl">

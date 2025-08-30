@@ -20,7 +20,7 @@ export default function DefaultLayout({
         { label: "Home", href: "/" },
         { label: "Projects", href: "/projects" },
         { label: "Create Project", href: "/create" },
-        { label: "Saved Projects", href: "/saved" },
+        { label: "Saved Projects", href: "/saved-projects" },
       ],
     },
     {
@@ -35,7 +35,6 @@ export default function DefaultLayout({
     {
       title: "Resources",
       links: [
-        { label: "About", href: "/about" },
         { label: "Help & Support", href: "#" },
         { label: "Privacy Policy", href: "#" },
         { label: "Terms of Service", href: "#" },
@@ -143,7 +142,7 @@ export default function DefaultLayout({
                 <div className="text-gray-400 text-sm">
                   © {currentYear} Project Catalog. All rights reserved.
                 </div>
-                <div className="flex gap-6 text-sm text-gray-400">
+                <div className="flex gap-6 text-sm text-muted">
                   <button
                     className="hover:text-cyan-400 transition-colors"
                     onClick={() => navigate("#")}

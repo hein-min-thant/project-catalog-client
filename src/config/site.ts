@@ -20,6 +20,14 @@ export const siteConfig = {
       label: "Admim",
       href: "/admin-dashboard",
     },
+    {
+      label: "Saved Project",
+      href: "/saved-projects",
+    },
+    {
+      label: "Notifications",
+      href: "/notifications",
+    },
   ],
   navMenuItems: [
     {
@@ -35,7 +43,7 @@ export const siteConfig = {
       href: "/saved-projects",
     },
     {
-      label: "Saved Project",
+      label: "Notifications",
       href: "/notifications",
     },
     {
@@ -52,7 +60,7 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/frontio-ai/heroui",
+    github: "https://github.com/hein-min-thant/project-catalog",
     twitter: "https://twitter.com/hero_ui",
     docs: "https://heroui.com",
     discord: "https://discord.gg/9b6yyZKmH4",

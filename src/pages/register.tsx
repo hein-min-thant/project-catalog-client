@@ -19,7 +19,7 @@ export default function RegisterPage() {
 
   return (
     <DefaultLayout>
-      <div className="flex h-full w-full items-center justify-center px-4 py-8">
+      <div className="flex h-full w-full items-center justify-center px-0 md:px-4 py-8">
         <div className="w-full max-w-md">
           {step === "register" ? (
             <RegisterForm onRegistrationSuccess={handleRegistrationSuccess} />

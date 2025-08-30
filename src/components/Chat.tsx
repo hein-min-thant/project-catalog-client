@@ -100,7 +100,7 @@ const ChatApp: React.FC<ChatAppProps> = ({
   }, [conversationHistory]);
 
   return (
-    <div className="flex flex-col md:h-[calc(100vh-64px)]  bg-card/60 backdrop-blur-md">
+    <div className="flex flex-col h-full md:h-[calc(100vh-64px)]  bg-card/60 backdrop-blur-md">
       <header>
         <div className="shrink-0 bg-card/60 backdrop-blur-md border-b border-border px-4 py-3 flex items-center justify-between">
           <h3 className="text-lg font-bold text-cyan-500">Project Assistant</h3>

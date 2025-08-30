@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 
 import api from "../config/api";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,13 +46,17 @@ export default function CredentialsForm({
     try {
       await requestOTP();
     } catch (error: any) {
-      alert(error.message);
+      toast("Error", {
+        description: "New passwords do not match.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
+      });
     }
   };
 
   return (
-    <Card className="w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
-      <CardHeader className="space-y-4 pb-6">
+    <Card className="w-full md:w-[400px] bg-gradient-to-br from-background via-background to-gray-50/30 dark:to-gray-800/30 border-border/50">
+      <CardHeader className="space-y-4 pb-4">
         <div className="flex justify-center">
           <div className="p-3 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl">
             <Mail className="h-6 w-6 text-blue-500" />
@@ -70,7 +74,10 @@ export default function CredentialsForm({
       <CardContent>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="email" className="font-medium flex items-center gap-2">
+            <Label
+              htmlFor="email"
+              className="font-medium flex items-center gap-2"
+            >
               <Mail className="h-4 w-4" />
               Email Address
             </Label>
@@ -86,7 +93,10 @@ export default function CredentialsForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="font-medium flex items-center gap-2">
+            <Label
+              htmlFor="password"
+              className="font-medium flex items-center gap-2"
+            >
               <Lock className="h-4 w-4" />
               Password
             </Label>

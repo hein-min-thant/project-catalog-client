@@ -44,6 +44,8 @@ const ChangePasswordForm = ({ userId }: ChangePasswordFormProps) => {
     if (newPassword !== confirmPassword) {
       toast("Error", {
         description: "New passwords do not match.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
 
       return;
@@ -57,6 +59,8 @@ const ChangePasswordForm = ({ userId }: ChangePasswordFormProps) => {
       });
       toast("Success", {
         description: "Password changed successfully!",
+        className:
+          "bg-green-500/90 text-white dark:bg-green-600 px-4 py-3 rounded-xl shadow-lg",
       });
       setOldPassword("");
       setNewPassword("");
@@ -65,6 +69,8 @@ const ChangePasswordForm = ({ userId }: ChangePasswordFormProps) => {
       toast("Error", {
         description:
           error.response?.data?.message || "Failed to change password.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
     } finally {
       setIsLoading(false);
@@ -167,6 +173,8 @@ export default function ProfilePage() {
     if (!file.type.startsWith("image/")) {
       toast("Error", {
         description: "Please select an image file.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
       return;
     }
@@ -175,6 +183,8 @@ export default function ProfilePage() {
     if (file.size > 2 * 1024 * 1024) {
       toast("Error", {
         description: "Image size must be less than 2MB.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
       return;
     }
@@ -194,10 +204,14 @@ export default function ProfilePage() {
       setFormData((prev) => ({ ...prev, avatarUrl: imageUrl }));
       toast("Success", {
         description: "Avatar uploaded successfully!",
+        className:
+          "bg-green-500/90 text-white dark:bg-green-600 px-4 py-3 rounded-xl shadow-lg",
       });
     } catch (error: any) {
       toast("Error", {
         description: error.response?.data?.error || "Failed to upload avatar.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
     } finally {
       setUploadingAvatar(false);
@@ -208,6 +222,8 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, avatarUrl: "" }));
     toast("Avatar Removed", {
       description: "Avatar has been removed from your profile.",
+      className:
+        "bg-blue-500/90 text-white dark:bg-blue-600/90 px-4 py-3 rounded-xl shadow-lg",
     });
   };
 
@@ -241,11 +257,15 @@ export default function ProfilePage() {
         setEditing(false);
         toast("Profile Updated", {
           description: "Your profile has been successfully updated.",
+          className:
+            "bg-green-500/90 text-white dark:bg-green-600 px-4 py-3 rounded-xl shadow-lg",
         });
       } else {
         setEditing(false);
         toast("No Changes", {
           description: "No changes were made to the profile.",
+          className:
+            "bg-blue-500/90 text-white dark:bg-blue-600/90 px-4 py-3 rounded-xl shadow-lg",
         });
       }
     } catch (err: any) {
@@ -257,6 +277,8 @@ export default function ProfilePage() {
       );
       toast("Update Failed", {
         description: error || "Please try again.",
+        className:
+          "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });
     } finally {
       setUpdating(false);
