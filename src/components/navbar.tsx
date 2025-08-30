@@ -74,24 +74,6 @@ export const Navbar = () => {
     navigate("/login");
   };
 
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper:
-          "bg-card/60 backdrop-blur-md border border-border rounded-xl focus-within:ring-2 focus-within:ring-cyan-500",
-        input: "text-sm placeholder-muted-foreground",
-      }}
-      endContent={<Kbd className="hidden lg:inline-block text-xs">⌘ K</Kbd>}
-      labelPlacement="outside"
-      placeholder="Search projects…"
-      startContent={
-        <SearchIcon className="text-base text-muted-foreground pointer-events-none" />
-      }
-      type="search"
-    />
-  );
-
   return (
     <HeroUINavbar
       className="bg-card/60 backdrop-blur-md border-b border-border"
