@@ -259,7 +259,7 @@ export const Navbar = () => {
       {/* Mobile menu drawer */}
       <NavbarMenu className="bg-card/80 backdrop-blur-md pt-4">
         {/* Mobile navigation items */}
-        {siteConfig.navItems.map((item) => (
+        {siteConfig.navMenuItems.map((item) => (
           <NavbarMenuItem key={item.href}>
             <Link
               className="block py-2 text-lg text-foreground/90 hover:text-cyan-500 transition"
@@ -321,10 +321,10 @@ export const Navbar = () => {
                 <Link
                   className="py-2 text-lg text-foreground/90 hover:text-cyan-500 transition flex items-center"
                   color="foreground"
-                  href="/create"
+                  href="/login"
                 >
                   <Plus className="mr-3 h-5 w-5" />
-                  Create Project
+                  Login
                 </Link>
               </NavbarMenuItem>
             </>

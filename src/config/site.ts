@@ -20,14 +20,6 @@ export const siteConfig = {
       label: "Admim",
       href: "/admin-dashboard",
     },
-    {
-      label: "Saved Project",
-      href: "/saved-projects",
-    },
-    {
-      label: "Notifications",
-      href: "/notifications",
-    },
   ],
   navMenuItems: [
     {
@@ -39,7 +31,7 @@ export const siteConfig = {
       href: "/projects",
     },
     {
-      label: "Saved Project",
+      label: "Saved Projects",
       href: "/saved-projects",
     },
     {
@@ -53,10 +45,6 @@ export const siteConfig = {
     {
       label: "Admin Dashboard",
       href: "/admin-dashboard",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
     },
   ],
   links: {
