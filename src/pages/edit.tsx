@@ -146,8 +146,8 @@ const EditProjectPage = () => {
           members:
             members.length > 0 ? members : [{ name: "", rollNumber: "" }],
         });
-      } catch (err) {
-        console.error("Failed to fetch project", err);
+      } catch (error) {
+        console.error("Failed to fetch project", error);
       } finally {
         setLoading(false);
       }
