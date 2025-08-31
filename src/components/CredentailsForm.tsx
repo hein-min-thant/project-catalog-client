@@ -16,10 +16,12 @@ import {
 
 interface CredentialsFormProps {
   onCredentialsSubmit: (email: string, password: string) => void;
+  onForgotPassword: () => void;
 }
 
 export default function CredentialsForm({
   onCredentialsSubmit,
+  onForgotPassword,
 }: CredentialsFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -146,6 +148,13 @@ export default function CredentialsForm({
             </Button>
 
             <div className="text-center">
+              <button
+                type="button"
+                onClick={onForgotPassword}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+              >
+                Forgot your password?
+              </button>
               <p className="text-sm text-default-600">
                 Don't have an account?{" "}
                 <a
