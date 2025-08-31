@@ -259,17 +259,19 @@ export const Navbar = () => {
       {/* Mobile menu drawer */}
       <NavbarMenu className="bg-card/80 backdrop-blur-md pt-4">
         {/* Mobile navigation items */}
-        {siteConfig.navMenuItems.map((item) => (
-          <NavbarMenuItem key={item.href}>
-            <Link
-              className="block py-2 text-lg text-foreground/90 hover:text-cyan-500 transition"
-              color="foreground"
-              href={item.href}
-            >
-              {item.label}
-            </Link>
-          </NavbarMenuItem>
-        ))}
+        {siteConfig.navMenuItems
+          .filter((item) => item.label.toLowerCase() !== "profile")
+          .map((item) => (
+            <NavbarMenuItem key={item.href}>
+              <Link
+                className="block py-2 text-lg text-foreground/90 hover:text-cyan-500 transition"
+                color="foreground"
+                href={item.href}
+              >
+                {item.label}
+              </Link>
+            </NavbarMenuItem>
+          ))}
 
         {/* Mobile auth section */}
         <div className="mt-4 pt-4 border-t border-border">

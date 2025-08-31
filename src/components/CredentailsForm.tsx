@@ -47,7 +47,7 @@ export default function CredentialsForm({
       await requestOTP();
     } catch (error: any) {
       toast("Error", {
-        description: "New passwords do not match.",
+        description: error.message,
         className:
           "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });

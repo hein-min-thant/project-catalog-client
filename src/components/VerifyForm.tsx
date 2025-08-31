@@ -60,7 +60,7 @@ export default function VerifyForm({ email, onBack }: VerifyFormProps) {
 
       if (res.status === 200 || res.status === 201) {
         toast("Success", {
-          description: "Password changed successfully!",
+          description: "Registered successfully!",
           className:
             "bg-green-500/90 text-white dark:bg-green-600 px-4 py-3 rounded-xl shadow-lg",
         });
@@ -68,7 +68,7 @@ export default function VerifyForm({ email, onBack }: VerifyFormProps) {
       }
     } catch (err: any) {
       toast("Error", {
-        description: "New passwords do not match.",
+        description: err.message,
         className:
           "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });

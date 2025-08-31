@@ -101,7 +101,7 @@ export default function IndexPage() {
             className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-semibold px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
             color="primary"
             size="lg"
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/login")}
           >
             Get Started Free
           </Button>

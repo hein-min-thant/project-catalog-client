@@ -14,6 +14,7 @@ export interface User {
   bio?: string;
   createdAt: string;
   updatedAt: string;
+  is_active: boolean;
 }
 export interface Project {
   id: number;

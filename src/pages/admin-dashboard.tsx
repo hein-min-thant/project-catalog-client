@@ -126,17 +126,19 @@ export default function AdminDashboardPage() {
   const filteredUsers = useMemo(() => {
     if (!usersData?.content) return [];
 
-    return usersData.content.filter((user: User) => {
-      const matchesSearch =
-        userSearch === "" ||
-        user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
-        user.email.toLowerCase().includes(userSearch.toLowerCase());
+    return usersData.content
+      .filter((user: User) => user.is_active)
+      .filter((user: User) => {
+        const matchesSearch =
+          userSearch === "" ||
+          user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+          user.email.toLowerCase().includes(userSearch.toLowerCase());
 
-      const matchesRole =
-        userRoleFilter === "all" || user.role === userRoleFilter;
+        const matchesRole =
+          userRoleFilter === "all" || user.role === userRoleFilter;
 
-      return matchesSearch && matchesRole;
-    });
+        return matchesSearch && matchesRole;
+      });
   }, [usersData, userSearch, userRoleFilter]);
 
   const filteredProjects = useMemo(() => {
