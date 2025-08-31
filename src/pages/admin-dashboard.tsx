@@ -164,7 +164,7 @@ export default function AdminDashboardPage() {
     const projects = projectsData?.content || [];
 
     return {
-      totalUsers: users.length,
+      totalUsers: users.filter((u: User) => u.is_active).length,
       totalProjects: projects.length,
       approvedProjects: projects.filter(
         (p: Project) => p.approvalStatus === "APPROVED"
