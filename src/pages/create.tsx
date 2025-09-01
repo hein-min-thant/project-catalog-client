@@ -106,6 +106,10 @@ const CreateProjectPage = () => {
       categories: [
         { key: "1", label: "Web Development" },
         { key: "2", label: "Mobile App" },
+        { key: "3", label: "OODD" },
+        { key: "4", label: "Data Mining" },
+        { key: "5", label: "Data Science" },
+        { key: "6", label: "Software Engineering" },
       ],
       statuses: [
         { key: "completed", label: "Completed" },
@@ -252,7 +256,9 @@ const CreateProjectPage = () => {
       const err = error as any;
 
       if (err.response) {
-        setSubmitMessage(`Failed to create project: ${err.response.data}`);
+        setSubmitMessage(
+          `Failed to create project: ${err.response.data.message}`
+        );
       } else if (err.request) {
         setSubmitMessage("Failed to create project: No response from server.");
       } else {

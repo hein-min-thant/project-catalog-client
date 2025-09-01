@@ -100,6 +100,10 @@ const EditProjectPage = () => {
       categories: [
         { key: "1", label: "Web Development" },
         { key: "2", label: "Mobile App" },
+        { key: "3", label: "OODD" },
+        { key: "4", label: "Data Mining" },
+        { key: "5", label: "Data Science" },
+        { key: "6", label: "Software Engineering" },
       ],
     };
   }, []);
