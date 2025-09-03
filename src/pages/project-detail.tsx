@@ -259,7 +259,7 @@ export default function ProjectDetailPage() {
                       {project.tags && project.tags.length > 0 && (
                         <DetailBlock
                           icon="mdi:tag-multiple"
-                          title="Technologies"
+                          title="Languages"
                         >
                           <div className="flex flex-wrap gap-2">
                             {project.tags.map((tag, index) => (
@@ -471,7 +471,7 @@ export default function ProjectDetailPage() {
             className="fixed bottom-3 md:bottom-6 right-6 z-50 bg-cyan-500 hover:bg-cyan-600 text-white shadow-2xl w-12 h-12 p-0 transition-all duration-500 hover:scale-110 rounded-lg"
             onClick={() => setIsChatOpen(true)}
           >
-            <Icon className="h-6 w-6" icon="mdi:chat" />
+            <Icon className="h-6 w-6" icon="mdi:robot" />
           </Button>
         )}
 

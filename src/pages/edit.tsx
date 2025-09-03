@@ -168,23 +168,24 @@ const EditProjectPage = () => {
         const project = res.data;
 
         // Convert project members to form format
-        let members = [{ name: "", rollNumber: "" }];
-        try {
-          if (
-            project.membersJson &&
-            project.membersJson !== "[]" &&
-            project.membersJson !== ""
-          ) {
-            const parsedMembers = JSON.parse(project.membersJson);
-            members = parsedMembers.map((member: any) => ({
-              name: member.name || "",
-              rollNumber: member.rollNumber || "",
-            }));
-          }
-        } catch (error) {
-          console.error("Error parsing members:", error);
-          members = [{ name: "", rollNumber: "" }];
-        }
+        let members: Member[] = [{ name: '', rollNumber: '' }];
+
+try {
+  if (project.membersJson && project.membersJson !== '[]' && project.membersJson !== '') {
+    const map = JSON.parse(project.membersJson) as Record<string, string>;
+
+    // Map -> array
+    members = Object.entries(map).map(([name, rollNumber]) => ({
+      name,
+      rollNumber,
+    }));
+
+    if (members.length === 0) members = [{ name: '', rollNumber: '' }];
+  }
+} catch (e) {
+  console.error('Error parsing members:', e);
+  members = [{ name: '', rollNumber: '' }];
+}
 
         // Set form data with all fields
         setFormData({

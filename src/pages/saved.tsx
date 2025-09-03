@@ -40,7 +40,6 @@ interface SavedProjectDTO {
   projectId: number;
   projectTitle: string;
   projectDescription: string;
-  categoryId: number;
   coverImageUrl: string;
   academic_year: string;
   student_year: string;
@@ -49,7 +48,6 @@ interface SavedProjectDTO {
 export default function SavedProjectsPage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedYear, setSelectedYear] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
@@ -78,22 +76,15 @@ export default function SavedProjectsPage() {
   });
 
   // Get unique categories and years for filtering
-  const { categories, academicYears } = useMemo(() => {
-    if (!savedProjects) return { categories: [], academicYears: [] };
+  const {  academicYears } = useMemo(() => {
+    if (!savedProjects) return {  academicYears: [] };
 
-    const uniqueCategories = Array.from(
-      new Set(savedProjects.map((p) => p.categoryId))
-    ).map((categoryId) => ({
-      key: categoryId.toString(),
-      label: `Category ${categoryId}`, // You might want to fetch actual category names
-    }));
 
     const uniqueYears = Array.from(
       new Set(savedProjects.map((p) => p.academic_year))
     ).filter(Boolean);
 
     return {
-      categories: uniqueCategories,
       academicYears: uniqueYears,
     };
   }, [savedProjects]);
@@ -111,15 +102,12 @@ export default function SavedProjectsPage() {
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "all" ||
-        project.categoryId.toString() === selectedCategory;
       const matchesYear =
         selectedYear === "all" || project.academic_year === selectedYear;
 
-      return matchesSearch && matchesCategory && matchesYear;
+      return matchesSearch && matchesYear;
     });
-  }, [savedProjects, searchQuery, selectedCategory, selectedYear]);
+  }, [savedProjects, searchQuery, selectedYear]);
 
   if (isLoading) {
     return (
@@ -224,24 +212,6 @@ export default function SavedProjectsPage() {
                   />
                 </div>
 
-                {/* Category Filter */}
-                <Select
-                  value={selectedCategory}
-                  onValueChange={setSelectedCategory}
-                >
-                  <SelectTrigger className="w-full lg:w-48 border-purple-200 dark:border-purple-800 focus:border-purple-500 focus:ring-purple-500/20">
-                    <Filter className="mr-2 h-4 w-4" />
-                    <SelectValue placeholder="All Categories" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((category) => (
-                      <SelectItem key={category.key} value={category.key}>
-                        {category.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
 
                 {/* Year Filter */}
                 <Select value={selectedYear} onValueChange={setSelectedYear}>
@@ -286,7 +256,6 @@ export default function SavedProjectsPage() {
 
               {/* Active Filters */}
               {(searchQuery ||
-                selectedCategory !== "all" ||
                 selectedYear !== "all") && (
                 <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/50">
                   <span className="text-sm text-default-600">
@@ -298,18 +267,6 @@ export default function SavedProjectsPage() {
                       variant="secondary"
                     >
                       Search: {searchQuery}
-                    </Badge>
-                  )}
-                  {selectedCategory !== "all" && (
-                    <Badge
-                      className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
-                      variant="secondary"
-                    >
-                      Category:{" "}
-                      {
-                        categories.find((c) => c.key === selectedCategory)
-                          ?.label
-                      }
                     </Badge>
                   )}
                   {selectedYear !== "all" && (
@@ -374,7 +331,6 @@ export default function SavedProjectsPage() {
                     variant="outline"
                     onClick={() => {
                       setSearchQuery("");
-                      setSelectedCategory("all");
                       setSelectedYear("all");
                     }}
                   >
@@ -426,15 +382,6 @@ function EnhancedSavedProjectCard({
 }: EnhancedSavedProjectCardProps) {
   const navigate = useNavigate();
 
-  const { data: categoryName } = useQuery({
-    queryKey: ["categoryName", project.categoryId],
-    queryFn: async () => {
-      const { data } = await api.get(`/category/${project.categoryId}`);
-
-      return data;
-    },
-    enabled: !!project.categoryId,
-  });
 
   if (viewMode === "list") {
     return (
@@ -458,11 +405,6 @@ function EnhancedSavedProjectCard({
                 {project.projectDescription}
               </p>
               <div className="flex items-center gap-4 text-xs text-default-500">
-                {categoryName && (
-                  <Badge className="text-xs" variant="secondary">
-                    {categoryName}
-                  </Badge>
-                )}
                 {project.academic_year && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
@@ -512,11 +454,6 @@ function EnhancedSavedProjectCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-0">
-        {categoryName && (
-          <Badge className="mb-3 text-xs" variant="secondary">
-            {categoryName}
-          </Badge>
-        )}
         <p className="text-sm text-default-600 line-clamp-3 mb-4">
           {project.projectDescription}
         </p>

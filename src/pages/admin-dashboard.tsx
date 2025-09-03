@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
   } = useQuery({
     queryKey: ["adminProjects"],
     queryFn: async () => {
-      const { data } = await api.get("/admin/projects");
+      const { data } = await api.get("/admin/projects?page=0&size=100");
 
       return data;
     },
