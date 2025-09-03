@@ -59,7 +59,8 @@ export const useNotificationContext = () => {
   const getWebSocketUrl = useCallback(() => {
     const apiBaseUrl =
       api.defaults.baseURL ||
-      "https://project-catalog-codeaholics.onrender.com";
+      "https://project-catalog-codeaholics.onrender.com" ||
+      "http://localhost:8080";
     return apiBaseUrl + "/ws";
   }, []);
 

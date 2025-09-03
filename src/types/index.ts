@@ -4,6 +4,19 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
+// Department and Course types
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface Course {
+  id: number;
+  name: string;
+  code: string;
+  department: Department;
+}
+
 // Supervisor-related types
 export interface User {
   id: number;
@@ -31,7 +44,8 @@ export interface Project {
   objectives: string;
   status: string;
   userId: number;
-  categoryId: number;
+  departmentId: number;
+  courseId: number;
   supervisorId?: number;
   supervisorName?: string;
   approvalStatus: "PENDING" | "APPROVED" | "REJECTED";

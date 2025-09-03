@@ -377,7 +377,7 @@ export default function SupervisorDashboardPage() {
 
                       <Button
                         variant="destructive"
-                        className="transition-all duration-300"
+                        className="transition-all duration-300 text-white"
                         disabled={rejectMutation.isPending}
                         onClick={() => handleReject(project)}
                       >
@@ -456,6 +456,7 @@ export default function SupervisorDashboardPage() {
                 disabled={!rejectionReason.trim() || rejectMutation.isPending}
                 variant="destructive"
                 onClick={handleRejectConfirm}
+                className="text-white"
               >
                 {rejectMutation.isPending ? (
                   <>

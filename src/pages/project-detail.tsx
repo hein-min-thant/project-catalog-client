@@ -9,6 +9,7 @@ import { useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { Project } from "./projects";
+import { Department, Course } from "@/types"; // Add Department and Course imports
 
 import api from "@/config/api";
 import DefaultLayout from "@/layouts/default";
@@ -57,12 +58,22 @@ export default function ProjectDetailPage() {
     queryKey: ["currentUser"],
     queryFn: async () => (await api.get("/users/me")).data,
   });
-  const { data: categoryName } = useQuery({
-    queryKey: ["categoryName"],
+  
+  // Remove category query and add department/course queries
+  const { data: department } = useQuery({
+    queryKey: ["department", project?.departmentId],
     queryFn: async () =>
-      (await api.get(`/category/${project?.categoryId}`)).data,
-    enabled: !!project?.categoryId,
+      (await api.get(`/departments/${project?.departmentId}`)).data as Department,
+    enabled: !!project?.departmentId,
   });
+  
+  const { data: course } = useQuery({
+    queryKey: ["course", project?.courseId],
+    queryFn: async () =>
+      (await api.get(`/courses/${project?.courseId}`)).data as Course,
+    enabled: !!project?.courseId,
+  });
+  
   const { data: isSaved } = useQuery({
     queryKey: ["isProjectSaved", id, currentUser?.id],
     queryFn: async () => {
@@ -98,9 +109,8 @@ export default function ProjectDetailPage() {
   const members = project?.membersJson
     ? (JSON.parse(project.membersJson) as MemberDTO[])
     : [];
-  const canEdit = currentUser && project?.userId === currentUser.id;
+  const canEdit = currentUser && project?.userId === currentUser.id && project?.approvalStatus !== "APPROVED";
 
-  /* ---------- Handlers ---------- */
   const handleSave = () => {
     if (!project || !currentUser) return;
     const dto = { projectId: project.id, userId: currentUser.id };
@@ -108,7 +118,6 @@ export default function ProjectDetailPage() {
     isSaved ? unsaveMutation.mutate(dto) : saveMutation.mutate(dto);
   };
 
-  /* ---------- Loading / 404 ---------- */
   if (isLoading)
     return (
       <DefaultLayout>
@@ -175,9 +184,17 @@ export default function ProjectDetailPage() {
               {/* Header Section */}
               {/* Breadcrumbs and Badges */}
               <div className="flex flex-wrap items-center gap-2">
-                {categoryName && (
-                  <Badge className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">
-                    {categoryName}
+                {/* Replace category badge with department and course badges */}
+                {department && (
+                  <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20">
+                    <Icon icon="mdi:office-building" className="mr-1 text-sm" />
+                    {department.name}
+                  </Badge>
+                )}
+                {course && (
+                  <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                    <Icon icon="mdi:book-open-variant" className="mr-1 text-sm" />
+                    {course.name} {course.code && `(${course.code})`}
                   </Badge>
                 )}
                 {project.academic_year && (
@@ -279,8 +296,8 @@ export default function ProjectDetailPage() {
                             </Badge>
 
                             {project.supervisorName && (
-                              <p className="text-sm text-default-600">
-                                Supervisor: {project.supervisorName}
+                              <p className="text-sm text-default-600 flex items-center gap-2">
+                                Supervisor: {project.supervisorName} {project.supervisorName == "Project Catalog" ? <Icon color="primary" icon="mdi:check-decagram"></Icon> : ""}
                               </p>
                             )}
 

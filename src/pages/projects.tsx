@@ -26,7 +26,8 @@ export interface Project {
   objectives: string;
   status: string;
   userId: number;
-  categoryId: number;
+  departmentId: number;
+  courseId: number;
   supervisorId?: number;
   supervisorName?: string;
   approvalStatus: "PENDING" | "APPROVED" | "REJECTED";
@@ -48,7 +49,8 @@ export interface Page<T> {
 
 export interface Filters {
   keyword: string;
-  categoryId: string;
+  departmentId: string;
+  courseId: string;
   academicYear: string;
   studentYear: string;
   status: string;
@@ -83,7 +85,8 @@ const useDebouncedValue = <T,>(value: T, delay: number) => {
 export default function ProjectsPage() {
   const initialFilters: Filters = {
     keyword: "",
-    categoryId: "",
+    departmentId: "",
+    courseId: "",
     academicYear: "",
     studentYear: "",
     status: "",

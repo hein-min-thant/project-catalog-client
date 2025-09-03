@@ -2,6 +2,7 @@
 // src/components/ProjectFilters.tsx
 import { useMemo } from "react";
 import { Icon } from "@iconify/react";
+import { useDepartments, useAllCourses } from "@/hooks/useDepartmentsAndCourses";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
@@ -26,24 +27,41 @@ export function ProjectFilters({
   onFilterChange,
   onClearFilters,
 }: ProjectFiltersProps) {
-  const { academicYears, studentYears, categories } = useMemo(() => {
+  // Fetch departments and courses
+  const { data: departments, isLoading: isLoadingDepartments } = useDepartments();
+  const { data: allCourses, isLoading: isLoadingAllCourses } = useAllCourses();
+  
+  // Filter courses based on department
+  const filteredCourses = useMemo(() => {
+    if (!filters.departmentId || !allCourses) return [];
+    return allCourses.filter(course => 
+      course.department.id === parseInt(filters.departmentId)
+    );
+  }, [filters.departmentId, allCourses]);
+
+  const { academicYears, studentYears } = useMemo(() => {
     const years = [];
-    const startYear = 2000;
+    const startYear = 2020;
     const currentYear = new Date().getFullYear();
 
-    for (let year = startYear; year <= currentYear; year++) {
+    for (let year = startYear; year <= currentYear-1; year++) {
       years.push({ key: `${year}-${year + 1}`, label: `${year}-${year + 1}` });
     }
 
     return {
       academicYears: years.reverse(),
       studentYears: [
-        { key: "First Year", label: "First Year" },
-        { key: "Second Year", label: "Second Year" },
-        { key: "Third Year", label: "Third Year" },
-        { key: "Fourth Year", label: "Fourth Year" },
-        { key: "Final Year", label: "Final Year" },
-        { key: "Master", label: "Master" },
+        { key: "Semester I", label: "Semester I" },
+        { key: "Semester II", label: "Semester II" },
+        { key: "Semester III", label: "Semester III" },
+        { key: "Semester IV", label: "Semester IV" },
+        { key: "Semester V", label: "Semester V" },
+        { key: "Semester VI", label: "Semester VI" },
+        { key: "Semester VII", label: "Semester VII" },
+        { key: "Semester VIII", label: "Semester VIII" },
+        { key: "Semester IX", label: "Semester IX" },
+        { key: "Internship", label: "Internship" },
+        { key: "Final Project", label: "Final Project" },
       ],
       categories: [
         { key: "1", label: "Web Development" },
@@ -145,7 +163,7 @@ export function ProjectFilters({
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Icon className="text-cyan-500" icon="mdi:tag-multiple" />
-              Technologies
+              Languages
             </label>
             <Input
               className="w-full bg-background/80 border-cyan-200 dark:border-cyan-800 focus:border-cyan-500 focus:ring-cyan-500/20 transition-all duration-300"
@@ -155,28 +173,79 @@ export function ProjectFilters({
             />
           </div>
 
-          {/* Category */}
+          {/* Department */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Icon className="text-cyan-500" icon="mdi:folder" />
-              Category
+              <Icon className="text-cyan-500" icon="mdi:school" />
+              Department
             </label>
             <Select
-              value={filters.categoryId || "all"}
-              onValueChange={(val) =>
-                onFilterChange("categoryId", val === "all" ? "" : val)
-              }
+              value={filters.departmentId || "all"}
+              onValueChange={(val) => {
+                onFilterChange("departmentId", val === "all" ? "" : val);
+                // Reset course when department changes
+                onFilterChange("courseId", "");
+              }}
             >
               <SelectTrigger className="w-full bg-background/80 border-cyan-200 dark:border-cyan-800 focus:border-cyan-500 focus:ring-cyan-500/20 transition-all duration-300">
-                <SelectValue placeholder="All categories" />
+                <SelectValue placeholder="All departments" />
               </SelectTrigger>
               <SelectContent className="bg-background border border-border shadow-xl">
-                <SelectItem value="all">All categories</SelectItem>
-                {categories.map((c) => (
-                  <SelectItem key={c.key} value={c.key}>
-                    {c.label}
+                <SelectItem value="all">All departments</SelectItem>
+                {isLoadingDepartments ? (
+                  <SelectItem disabled value="loading">
+                    Loading departments...
                   </SelectItem>
-                ))}
+                ) : (
+                  departments?.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Course */}
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Icon className="text-cyan-500" icon="mdi:book-open-variant" />
+              Course
+            </label>
+            <Select
+              value={filters.courseId || "all"}
+              onValueChange={(val) =>
+                onFilterChange("courseId", val === "all" ? "" : val)
+              }
+              disabled={!filters.departmentId || isLoadingAllCourses}
+            >
+              <SelectTrigger className="w-full bg-background/80 border-cyan-200 dark:border-cyan-800 focus:border-cyan-500 focus:ring-cyan-500/20 transition-all duration-300">
+                <SelectValue placeholder="All courses" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border border-border shadow-xl">
+                {!filters.departmentId ? (
+                  <SelectItem disabled value="no-dept">
+                    Select department first
+                  </SelectItem>
+                ) : isLoadingAllCourses ? (
+                  <SelectItem disabled value="loading">
+                    Loading courses...
+                  </SelectItem>
+                ) : filteredCourses.length === 0 ? (
+                  <SelectItem disabled value="no-courses">
+                    No courses available
+                  </SelectItem>
+                ) : (
+                  <>
+                    <SelectItem value="all">All courses</SelectItem>
+                    {filteredCourses.map((course) => (
+                      <SelectItem key={course.id} value={course.id.toString()}>
+                        {course.code} - {course.name}
+                      </SelectItem>
+                    ))}
+                  </>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -211,7 +280,7 @@ export function ProjectFilters({
           <div className="space-y-2">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Icon className="text-cyan-500" icon="mdi:school" />
-              Student Year
+              Semester
             </label>
             <Select
               value={filters.studentYear || "all"}

@@ -27,6 +27,10 @@ import {
 } from "@/components/ui/select";
 import api from "@/config/api";
 import { useSupervisors } from "@/hooks/useSupervisors";
+import {
+  useDepartments,
+  useAllCourses,
+} from "@/hooks/useDepartmentsAndCourses";
 
 // Define the shape of a member
 interface Member {
@@ -43,12 +47,14 @@ const EditProjectPage = () => {
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
+    objectives: string;
     body: string;
     benefits: string;
     githubLink: string;
     academic_year: string;
     student_year: string;
-    categoryId: string;
+    departmentId: string;
+    courseId: string;
     supervisorId: string;
     approvalStatus: string;
     tags: string[];
@@ -57,11 +63,13 @@ const EditProjectPage = () => {
     title: "",
     description: "",
     body: "",
+    objectives: "",
     benefits: "",
     githubLink: "",
     academic_year: "",
     student_year: "",
-    categoryId: "",
+    departmentId: "",
+    courseId: "",
     approvalStatus: "",
     supervisorId: "",
     tags: [],
@@ -76,27 +84,71 @@ const EditProjectPage = () => {
   // Fetch supervisors for dropdown
   const { data: supervisors, isLoading: isLoadingSupervisors } =
     useSupervisors();
+  // Fetch departments and courses for dropdowns
+  const { data: departments, isLoading: isLoadingDepartments } =
+    useDepartments();
+  
+    const getWordCount = (text: string) => {
+      return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+    };
+  
+    const getCharacterCount = (text: string) => {
+      return text.length;
+    };
+
+  // Replace studentYears array
+  const studentSemesters = [
+    { key: "Semester I", label: "Semester I", code: "11" },
+    { key: "Semester II", label: "Semester II", code: "12" },
+    { key: "Semester III", label: "Semester III", code: "21" },
+    { key: "Semester IV", label: "Semester IV", code: "22" },
+    { key: "Semester V", label: "Semester V", code: "31" },
+    { key: "Semester VI", label: "Semester VI", code: "32" },
+    { key: "Semester VII", label: "Semester VII", code: "41" },
+    { key: "Semester VIII", label: "Semester VIII", code: "42" },
+    { key: "Semester IX", label: "Semester IX", code: "51" },
+    { key: "Semester X", label: "Semester X", code: "" },
+  ];
+  const { data: allCourses, isLoading: isLoadingAllCourses } = useAllCourses();
+
+  // Update course filtering logic to use semester mapping
+  const semesterToPrefixes: Record<string, string[]> = {
+    "Semester I": ["CST-11", "CS-11", "CT-11", "CST(SS)-11", "CST(SK)-11"],
+    "Semester II": ["CST-12", "CS-12", "CT-12", "CST(SS)-12", "CST(SK)-12"],
+    "Semester III": ["CST-21", "CS-21", "CT-21", "CST(SS)-21", "CST(SK)-21"],
+    "Semester IV": ["CST-22", "CS-22", "CT-22", "CST(SS)-22", "CST(SK)-22"],
+    "Semester V": ["CST-31", "CS-31", "CT-31", "CST(SS)-31", "CST(SK)-31"],
+    "Semester VI": ["CST-32", "CS-32", "CT-32", "CST(SS)-32", "CST(SK)-32"],
+    "Semester VII": ["CST-41", "CS-41", "CT-41", "CST(SS)-41", "CST(SK)-41"],
+    "Semester VIII": ["CST-42", "CS-42", "CT-42", "CST(SS)-42", "CST(SK)-42"],
+    "Semester IX": ["CST-51", "CS-51", "CT-51", "CST(SS)-51", "CST(SK)-51"],
+    "Semester X":  ["Internship" , "In Compus"],
+  };
+  const filteredCourses = useMemo(() => {
+    if (!formData.departmentId || !formData.student_year || !allCourses) return [];
+    const allowedPrefixes = semesterToPrefixes[formData.student_year];
+    if (!allowedPrefixes) return [];
+    const deptId = parseInt(formData.departmentId, 10);
+    return allCourses.filter(
+      (course) =>
+        course.department.id === deptId &&
+        allowedPrefixes.some((p) => course.code.startsWith(p))
+    );
+  }, [formData.departmentId, formData.student_year, allCourses]);
+
 
   // The provided data for the dropdowns
-  const { academicYears, studentYears, categories } = useMemo(() => {
+  const { academicYears } = useMemo(() => {
     const years = [];
-    const startYear = 2000;
+    const startYear = 2022;
     const currentYear = new Date().getFullYear();
 
-    for (let year = startYear; year <= currentYear; year++) {
+    for (let year = startYear; year <= currentYear-1; year++) {
       years.push({ key: `${year}-${year + 1}`, label: `${year}-${year + 1}` });
     }
 
     return {
       academicYears: years.reverse(),
-      studentYears: [
-        { key: "First Year", label: "First Year" },
-        { key: "Second Year", label: "Second Year" },
-        { key: "Third Year", label: "Third Year" },
-        { key: "Fourth Year", label: "Fourth Year" },
-        { key: "Final Year", label: "Final Year" },
-        { key: "Master", label: "Master" },
-      ],
       categories: [
         { key: "1", label: "Web Development" },
         { key: "2", label: "Mobile App" },
@@ -140,10 +192,12 @@ const EditProjectPage = () => {
           description: project.description || "",
           body: project.body || "",
           benefits: project.benefits || "",
+          objectives : project.objectives || "",
           githubLink: project.githubLink || "",
           academic_year: project.academic_year || "",
           student_year: project.student_year || "",
-          categoryId: project.categoryId?.toString() || "",
+          departmentId: project.departmentId?.toString() || "",
+          courseId: project.courseId?.toString() || "",
           approvalStatus: "PENDING",
           supervisorId: project.supervisorId?.toString() || "",
           tags: project.tags || [],
@@ -165,6 +219,19 @@ const EditProjectPage = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
+    // Apply character limits
+    if (name === "title" && value.length > 255) {
+      return; // Don't update if exceeding limit
+    }
+
+    // Apply word limits for description and objectives
+    if (
+      (name === "description" || name === "objectives") &&
+      getWordCount(value) > 150
+    ) {
+      return; // Don't update if exceeding word limit
+    }
 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -191,10 +258,12 @@ const EditProjectPage = () => {
   };
 
   const handleAddMember = () => {
-    setFormData((prev) => ({
-      ...prev,
-      members: [...prev.members, { name: "", rollNumber: "" }],
-    }));
+    if (formData.members.length < 8) {
+      setFormData((prev) => ({
+        ...prev,
+        members: [...prev.members, { name: "", rollNumber: "" }],
+      }));
+    }
   };
 
   const handleRemoveMember = (index: number) => {
@@ -206,7 +275,7 @@ const EditProjectPage = () => {
 
   // Handle adding tags
   const handleAddTag = () => {
-    if (newTag.trim() !== "") {
+    if (newTag.trim() !== "" && formData.tags.length < 5) {
       setFormData((prev) => ({ ...prev, tags: [...prev.tags, newTag.trim()] }));
       setNewTag("");
     }
@@ -440,7 +509,7 @@ const EditProjectPage = () => {
                 className="mr-2"
                 icon={showProjectInfo ? "mdi:eye-off" : "mdi:eye"}
               />
-              {showProjectInfo ? "Hide" : "Show"} Project Information Column
+              {showProjectInfo ? "Hide" : "Show"} General Information Column
             </Button>
           </div>
           {/* Form */}
@@ -462,10 +531,10 @@ const EditProjectPage = () => {
                         </div>
                         <div>
                           <CardTitle className="text-xl">
-                            Project Information
+                            General Information
                           </CardTitle>
                           <CardDescription>
-                            Update your project&apos;s core details
+                            Update your project&apos;s basics details and objectives
                           </CardDescription>
                         </div>
                       </div>
@@ -483,36 +552,59 @@ const EditProjectPage = () => {
                           placeholder="e.g., AI-Powered Chatbot"
                           value={formData.title}
                           onChange={handleInputChange}
+                          maxLength={255}
                         />
+                        <div className="flex justify-between text-xs text-default-600">
+                          <span>
+                            {getCharacterCount(formData.title)} / 255 characters
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
                         <Label className="font-medium" htmlFor="description">
-                          Short Description *
+                          Short Description * (Max 150 words)
                         </Label>
                         <Textarea
                           required
                           className="border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20 min-h-[100px]"
                           id="description"
                           name="description"
-                          placeholder="Brief summary of your project"
+                          placeholder="Brief description of your project"
                           value={formData.description}
                           onChange={handleInputChange}
                         />
+                        <div className="flex justify-between text-xs text-default-600">
+                          <span>
+                            {getWordCount(formData.description)} / 150 words
+                          </span>
+                          <span>
+                            {getCharacterCount(formData.description)} characters
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-medium" htmlFor="benefits">
-                          Benefits (Optional)
+                        <Label className="font-medium" htmlFor="objectives">
+                          Objectives * (Max 150 words)
                         </Label>
                         <Textarea
-                          className="border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20 min-h-[80px]"
-                          id="benefits"
-                          name="benefits"
-                          placeholder="How will this project benefit users or the community?"
-                          value={formData.benefits}
+                          required
+                          className="border-cyan-200 dark:border-cyan-800 focus:border-cyan-500 focus:ring-cyan-500/20 min-h-[100px]"
+                          id="objectives"
+                          name="objectives"
+                          placeholder="What does your project aim to achieve?"
+                          value={formData.objectives}
                           onChange={handleInputChange}
                         />
+                        <div className="flex justify-between text-xs text-default-600">
+                          <span>
+                            {getWordCount(formData.objectives)} / 150 words
+                          </span>
+                          <span>
+                            {getCharacterCount(formData.objectives)} characters
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -577,22 +669,23 @@ const EditProjectPage = () => {
 
                       <div className="space-y-2">
                         <Label className="font-medium" htmlFor="student_year">
-                          Student Year *
+                          Semester *
                         </Label>
                         <Select
                           required
                           value={formData.student_year}
-                          onValueChange={(value) =>
-                            handleSelectChange("student_year", value)
-                          }
+                          onValueChange={(value) => {
+                            handleSelectChange("student_year", value);
+                            handleSelectChange("courseId", "");
+                          }}
                         >
                           <SelectTrigger className="bg-background/80 border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20">
-                            <SelectValue placeholder="Select student year" />
+                          <SelectValue placeholder="Select semester" />
                           </SelectTrigger>
                           <SelectContent className="bg-background border border-border shadow-lg">
-                            {studentYears.map((year) => (
-                              <SelectItem key={year.key} value={year.key}>
-                                {year.label}
+                            {studentSemesters.map((semester) => (
+                              <SelectItem key={semester.key} value={semester.key}>
+                                {semester.label}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -600,35 +693,93 @@ const EditProjectPage = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-medium" htmlFor="categoryId">
-                          Category *
+                        <Label className="font-medium" htmlFor="departmentId">
+                          Department *
                         </Label>
                         <Select
                           required
-                          value={formData.categoryId}
+                          value={formData.departmentId}
+                          onValueChange={(value) => {
+                            handleSelectChange("departmentId", value);
+                            handleSelectChange("courseId", "");
+                          }}
+                        >
+                          <SelectTrigger className="bg-background/80 border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20">
+                            <SelectValue placeholder="Select a department" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-background border border-border shadow-lg">
+                            {isLoadingDepartments ? (
+                              <SelectItem disabled value="loading">
+                                Loading departments...
+                              </SelectItem>
+                            ) : (
+                              departments?.map((department) => (
+                                <SelectItem
+                                  key={department.id}
+                                  value={department.id.toString()}
+                                >
+                                  {department.name}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="font-medium" htmlFor="courseId">
+                          Course *
+                        </Label>
+                        <Select
+                          required
+                          value={formData.courseId}
                           onValueChange={(value) =>
-                            handleSelectChange("categoryId", value)
+                            handleSelectChange("courseId", value)
+                          }
+                          disabled={
+                            !formData.departmentId ||
+                            !formData.student_year ||
+                            isLoadingAllCourses
                           }
                         >
                           <SelectTrigger className="bg-background/80 border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20">
-                            <SelectValue placeholder="Select a category" />
+                            <SelectValue placeholder="Select a course" />
                           </SelectTrigger>
                           <SelectContent className="bg-background border border-border shadow-lg">
-                            {categories.map((category) => (
-                              <SelectItem
-                                key={category.key}
-                                value={category.key}
-                              >
-                                {category.label}
+                            {!formData.departmentId ? (
+                              <SelectItem disabled value="no-dept">
+                                Select department first
                               </SelectItem>
-                            ))}
+                            ) : !formData.student_year ? (
+                              <SelectItem disabled value="no-year">
+                                Select student year first
+                              </SelectItem>
+                            ) : isLoadingAllCourses ? (
+                              <SelectItem disabled value="loading">
+                                Loading courses...
+                              </SelectItem>
+                            ) : filteredCourses.length === 0 ? (
+                              <SelectItem disabled value="no-courses">
+                                No courses available for {formData.student_year}{" "}
+                                in this department
+                              </SelectItem>
+                            ) : (
+                              filteredCourses.map((course) => (
+                                <SelectItem
+                                  key={course.id}
+                                  value={course.id.toString()}
+                                >
+                                  {course.code} - {course.name}
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
 
                       <div className="space-y-2">
                         <Label className="font-medium" htmlFor="supervisorId">
-                          Supervisor (Optional)
+                          Supervisor
                         </Label>
                         <Select
                           value={formData.supervisorId}
@@ -674,10 +825,10 @@ const EditProjectPage = () => {
                         </div>
                         <div>
                           <CardTitle className="text-xl">
-                            Technologies & Tags
+                            Languages & Tools
                           </CardTitle>
                           <CardDescription>
-                            Add relevant tags and technologies
+                            Add languages and tools used in the project
                           </CardDescription>
                         </div>
                       </div>
@@ -686,9 +837,9 @@ const EditProjectPage = () => {
                       <div className="space-y-2">
                         <Label className="font-medium">Add Tags</Label>
                         <div className="flex gap-2">
-                          <Input
+                        <Input
                             className="border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20"
-                            placeholder="e.g., react, spring, ai"
+                            placeholder="Enter a tag"
                             value={newTag}
                             onChange={(e) => setNewTag(e.target.value)}
                             onKeyDown={(e) => {
@@ -697,19 +848,22 @@ const EditProjectPage = () => {
                                 handleAddTag();
                               }
                             }}
+                            disabled={formData.tags.length >= 5}
                           />
                           <Button
                             className="border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-950/50"
                             type="button"
                             variant="outline"
                             onClick={handleAddTag}
+                            disabled={formData.tags.length >= 5}
                           >
                             Add
                           </Button>
                         </div>
-                        <p className="text-xs text-default-600">
-                          Press Enter or click Add to include tags
-                        </p>
+                        <div className="flex justify-between text-xs text-default-600">
+                          <span>Press Enter or click Add to include tags</span>
+                          <span>{formData.tags.length} / 5 tags</span>
+                        </div>
                       </div>
 
                       {formData.tags.length > 0 && (
@@ -809,7 +963,7 @@ const EditProjectPage = () => {
                                 className="border-orange-200 dark:border-orange-800 focus:border-orange-500 focus:ring-orange-500/20"
                                 id={`rollNumber-${index}`}
                                 name="rollNumber"
-                                placeholder="e.g., CS001"
+                                placeholder="e.g., UCSMG-XXXXX"
                                 value={member.rollNumber}
                                 onChange={(e) => handleMemberChange(index, e)}
                               />
@@ -823,9 +977,10 @@ const EditProjectPage = () => {
                         type="button"
                         variant="outline"
                         onClick={handleAddMember}
+                        disabled={formData.members.length >= 8}
                       >
                         <Icon className="mr-2" icon="mdi:plus" />
-                        Add Team Member
+                        Add Team Member ({formData.members.length}/8)
                       </Button>
                     </CardContent>
                   </Card>

@@ -45,7 +45,7 @@ export default function VerifyForm({ email, onBack }: VerifyFormProps) {
       }
     } catch (err: any) {
       toast("Error", {
-        description: err.response?.data || err.message || "Verification failed",
+        description: "Verification failed",
         className:
           "bg-red-500/90 text-white dark:bg-red-700/90 px-4 py-3 rounded-xl shadow-lg",
       });

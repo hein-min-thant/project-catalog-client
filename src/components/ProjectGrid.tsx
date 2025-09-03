@@ -62,6 +62,24 @@ export function ProjectGrid({
   }
 
   if (!data?.content || data.content.length === 0) {
+    // Build a dynamic message based on active filters
+    const activeFilters: string[] = [];
+    if (filters.keyword) activeFilters.push(`keyword "${filters.keyword}"`);
+    if (filters.departmentId) activeFilters.push(`department`);
+    if (filters.courseId) activeFilters.push(`course`);
+    if (filters.academicYear) activeFilters.push(`academic year "${filters.academicYear}"`);
+    if (filters.studentYear) activeFilters.push(`student year "${filters.studentYear}"`);
+    if (filters.status) activeFilters.push(`status "${filters.status}"`);
+    if (filters.tags) activeFilters.push(`tags "${filters.tags}"`);
+    if (filters.name) activeFilters.push(`name "${filters.name}"`);
+    if (filters.supervisor) activeFilters.push(`supervisor "${filters.supervisor}"`);
+    if (filters.members) activeFilters.push(`members "${filters.members}"`);
+
+    let message = "There are no projects available at the moment. Check back later for new content.";
+    if (activeFilters.length > 0) {
+      message = `No projects found for ${activeFilters.join(", ")}. Try adjusting your filters.`;
+    }
+
     return (
       <Card className="border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
         <CardContent className="text-center py-16">
@@ -72,9 +90,7 @@ export function ProjectGrid({
             No Projects Found
           </h3>
           <p className="text-default-600 mb-6 max-w-md mx-auto">
-            {filters.keyword || filters.categoryId || filters.academicYear || filters.studentYear
-              ? "No projects match your current filters. Try adjusting your search criteria."
-              : "There are no projects available at the moment. Check back later for new content."}
+            {message}
           </p>
           <div className="flex gap-3 justify-center">
             <Button 

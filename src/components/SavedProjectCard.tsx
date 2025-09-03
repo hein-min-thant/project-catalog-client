@@ -1,7 +1,7 @@
 // src/components/SavedProjectCard.tsx
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@iconify/react";
-import { CardBody, CardFooter, Spinner, Card, CardHeader } from "@heroui/react";
+import { CardBody, CardFooter, Card, CardHeader } from "@heroui/react";
 import { Button } from "@heroui/react";
 
 import { Badge } from "@/components/ui/badge";
@@ -16,18 +16,25 @@ interface SavedProjectCardProps {
     coverImageUrl: string;
     academic_year: string;
     student_year: string;
+    departmentId: number;
+    courseId: number;
   };
 }
 
 export default function SavedProjectCard({ project }: SavedProjectCardProps) {
-  const { data: categoryName } = useQuery({
-    queryKey: ["categoryName", project.categoryId],
-    queryFn: async () => {
-      const { data } = await api.get(`/category/${project.categoryId}`);
+  // Fetch department name
+  const { data: department } = useQuery({
+    queryKey: ["department", project.departmentId],
+    queryFn: async () =>
+      (await api.get(`/departments/${project.departmentId}`)).data,
+    enabled: !!project.departmentId,
+  });
 
-      return data;
-    },
-    enabled: !!project.categoryId, // Ensure query only runs if categoryId exists
+  // Fetch course name
+  const { data: course } = useQuery({
+    queryKey: ["course", project.courseId],
+    queryFn: async () => (await api.get(`/courses/${project.courseId}`)).data,
+    enabled: !!project.courseId,
   });
 
   return (
@@ -35,12 +42,20 @@ export default function SavedProjectCard({ project }: SavedProjectCardProps) {
       key={project.projectId}
       className="overflow-hidden border-small border-foreground/1"
     >
-      {project.coverImageUrl && (
+      {project.coverImageUrl ? (
         <div className="w-full h-40 overflow-hidden">
           <img
             alt={project.coverImageUrl}
             className="w-full h-full object-cover"
             src={project.coverImageUrl}
+          />
+        </div>
+      ) : (
+        <div className="w-full h-40 overflow-hidden">
+          <img
+            alt={project.coverImageUrl}
+            className="w-full h-full object-cover"
+            src="https://i.ibb.co/3yYHDr3s/6306486.jpg"
           />
         </div>
       )}
@@ -49,8 +64,9 @@ export default function SavedProjectCard({ project }: SavedProjectCardProps) {
       </CardHeader>
       <CardBody className="px-3 py-2">
         <Badge className="text-xs block">
-          {categoryName || <Spinner size="sm" />}{" "}
-          {/* Show loading spinner while fetching category name */}
+          {department ? department.name : ""}
+          {department && course ? " / " : ""}
+          {course ? course.name : ""}
         </Badge>
         <div className="flex flex-col gap-2 pt-2">
           <p className="text-sm line-clamp-3">{project.projectDescription}</p>

@@ -16,10 +16,19 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   const navigate = useNavigate();
 
-  const { data: categoryName } = useQuery({
-    queryKey: ["categoryName", project.categoryId],
+  // Fetch department name
+  const { data: department } = useQuery({
+    queryKey: ["department", project.departmentId],
     queryFn: async () =>
-      (await api.get(`/category/${project.categoryId}`)).data,
+      (await api.get(`/departments/${project.departmentId}`)).data,
+    enabled: !!project.departmentId,
+  });
+
+  // Fetch course name
+  const { data: course } = useQuery({
+    queryKey: ["course", project.courseId],
+    queryFn: async () => (await api.get(`/courses/${project.courseId}`)).data,
+    enabled: !!project.courseId,
   });
 
   const handleViewProject = () => {
@@ -45,12 +54,28 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <article className="bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50 rounded-xl shadow-md border border-border/50 overflow-hidden flex flex-col h-full cursor-pointer">
       {/* Cover Image */}
-      {project.coverImageUrl && (
+      {project.coverImageUrl ? (
         <div className="relative w-full h-32 overflow-hidden rounded-t-xl">
           <img
             alt={project.title}
             className="w-full h-full object-cover"
             src={project.coverImageUrl}
+          />
+
+          {/* Status Badge Overlay */}
+          <div className="absolute top-2 right-2">
+            <ApprovalStatusBadge
+              className="text-xs shadow-sm"
+              status={project.approvalStatus}
+            />
+          </div>
+        </div>
+      ) : (
+        <div className="relative w-full h-32 overflow-hidden rounded-t-xl">
+          <img
+            alt={project.title}
+            className="w-full h-full object-cover"
+            src="https://i.ibb.co/3yYHDr3s/6306486.jpg"
           />
 
           {/* Status Badge Overlay */}
@@ -72,10 +97,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {/* Category and Status */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <Badge className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">
-            {categoryName || "Uncategorized"}
-          </Badge>
-
+          {department && (
+            <Badge className="bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/20">
+              {department.name}
+            </Badge>
+          )}
+          {course && (
+            <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20">
+              {course.name}
+            </Badge>
+          )}
           {project.status && (
             <Badge className={getStatusColor(project.status)}>
               {project.status}

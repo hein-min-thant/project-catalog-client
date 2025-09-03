@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/dialog";
 import api from "@/config/api";
 import { Project, User } from "@/types";
-
+import { useDepartments } from "@/hooks/useDepartmentsAndCourses";
+import { useAllCourses } from "@/hooks/useDepartmentsAndCourses";
+import DepartmentsCoursesManagement from "@/components/DepartmentsCoursesManagement";
 export default function AdminDashboardPage() {
   const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -43,12 +45,14 @@ export default function AdminDashboardPage() {
     useState(false);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string>("");
-
-  // Search and filter states
+  const [projectStatusFilter, setProjectStatusFilter] = useState<string>("all");
   const [userSearch, setUserSearch] = useState("");
   const [projectSearch, setProjectSearch] = useState("");
   const [userRoleFilter, setUserRoleFilter] = useState<string>("all");
-  const [projectStatusFilter, setProjectStatusFilter] = useState<string>("all");
+
+  // Fetch departments and courses for statistics
+  const { data: departments } = useDepartments();
+  const { data: allCourses } = useAllCourses();
 
   // Fetch current user to check role
   const { data: currentUser } = useQuery({
@@ -158,10 +162,11 @@ export default function AdminDashboardPage() {
     });
   }, [projectsData, projectSearch, projectStatusFilter]);
 
-  // Statistics
   const stats = useMemo(() => {
-    const users = usersData?.content || [];
-    const projects = projectsData?.content || [];
+    const users = usersData?.content ?? [];
+    const projects = projectsData?.content ?? [];
+    const depts = departments ?? []; // <- no shadow
+    const courses = allCourses ?? [];
 
     return {
       totalUsers: users.filter((u: User) => u.is_active).length,
@@ -176,8 +181,10 @@ export default function AdminDashboardPage() {
       supervisorUsers: users.filter((u: User) => u.role === "SUPERVISOR")
         .length,
       regularUsers: users.filter((u: User) => u.role === "USER").length,
+      totalDepartments: depts.length,
+      totalCourses: courses.length,
     };
-  }, [usersData, projectsData]);
+  }, [usersData, projectsData, departments, allCourses]);
 
   const handleDeleteUser = (user: User) => {
     setSelectedUser(user);
@@ -338,7 +345,7 @@ export default function AdminDashboardPage() {
 
         {/* Main Content Tabs */}
         <Tabs className="space-y-6" defaultValue="users">
-          <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 bg-background/50 backdrop-blur-sm">
+          <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 bg-background/50 backdrop-blur-sm">
             <TabsTrigger className="flex items-center gap-2" value="users">
               <Icon className="w-4 h-4" icon="mdi:account-group" />
               Users ({stats.totalUsers})
@@ -346,6 +353,13 @@ export default function AdminDashboardPage() {
             <TabsTrigger className="flex items-center gap-2" value="projects">
               <Icon className="w-4 h-4" icon="mdi:folder-multiple" />
               Projects ({stats.totalProjects})
+            </TabsTrigger>
+            <TabsTrigger
+              className="flex items-center gap-2"
+              value="departments"
+            >
+              <Icon className="w-4 h-4" icon="mdi:school" />
+              Departments
             </TabsTrigger>
             <TabsTrigger className="flex items-center gap-2" value="analytics">
               <Icon className="w-4 h-4" icon="mdi:chart-bar" />
@@ -541,6 +555,7 @@ export default function AdminDashboardPage() {
                               <Button
                                 size="sm"
                                 variant="destructive"
+                                className="text-white"
                                 onClick={() => handleDeleteUser(user)}
                               >
                                 <Icon
@@ -738,6 +753,7 @@ export default function AdminDashboardPage() {
                                 <Button
                                   size="sm"
                                   variant="destructive"
+                                  className="text-white"
                                   onClick={() => handleDeleteProject(project)}
                                 >
                                   <Icon
@@ -758,43 +774,9 @@ export default function AdminDashboardPage() {
             </Card>
           </TabsContent>
 
-          {/* Analytics Tab */}
-          <TabsContent className="space-y-6" value="analytics">
-            <Card className="bg-gradient-to-br from-background to-gray-50/50 dark:to-gray-800/50">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-cyan-500/10 rounded-lg">
-                    <Icon
-                      className="text-xl text-cyan-500"
-                      icon="mdi:chart-bar"
-                    />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl">System Analytics</CardTitle>
-                    <CardDescription>
-                      Overview of system usage and performance metrics
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-6 bg-cyan-100 dark:bg-cyan-900/50 rounded-full flex items-center justify-center">
-                    <Icon
-                      className="w-8 h-8 text-cyan-500"
-                      icon="mdi:chart-line"
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">
-                    Analytics Coming Soon
-                  </h3>
-                  <p className="text-default-600">
-                    Advanced analytics and reporting features are currently in
-                    development.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Departments Tab */}
+          <TabsContent className="space-y-6" value="departments">
+            <DepartmentsCoursesManagement />
           </TabsContent>
         </Tabs>
 
@@ -822,6 +804,7 @@ export default function AdminDashboardPage() {
               <Button
                 disabled={deleteUserMutation.isPending}
                 variant="destructive"
+                className="text-white"
                 onClick={confirmDeleteUser}
               >
                 {deleteUserMutation.isPending ? (
@@ -858,6 +841,7 @@ export default function AdminDashboardPage() {
                 disabled={deleteProjectMutation.isPending}
                 variant="destructive"
                 onClick={confirmDeleteProject}
+                className="text-white"
               >
                 {deleteProjectMutation.isPending ? (
                   <Spinner size="sm" />
