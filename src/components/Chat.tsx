@@ -31,7 +31,7 @@ const ChatApp: React.FC<ChatAppProps> = ({
   const [modelId, setModelId] = useState("meta-llama/llama-4-maverick:free");
   const conversationEndRef = useRef<HTMLDivElement>(null);
 
-  const endpoint = "http://localhost:8080/generate";
+  const endpoint = "https://project-catalog-codeaholics.onrender.com/generate";
 
   useEffect(() => {
     if (projectContent && conversationHistory.length === 0) {
