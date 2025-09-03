@@ -168,43 +168,67 @@ const EditProjectPage = () => {
         const project = res.data;
 
         // Convert project members to form format
-        let members: Member[] = [{ name: '', rollNumber: '' }];
-
+        // --- Paste this inside fetchProject() in your useEffect, replacing the old members parsing logic ---
+let members: Member[] = [{ name: "", rollNumber: "" }];
 try {
-  if (project.membersJson && project.membersJson !== '[]' && project.membersJson !== '') {
-    const map = JSON.parse(project.membersJson) as Record<string, string>;
+  const raw = project.membersJson;
 
-    // Map -> array
-    members = Object.entries(map).map(([name, rollNumber]) => ({
-      name,
-      rollNumber,
-    }));
+  if (raw && raw !== "" && raw !== "null" && raw !== "[]") {
+    // try to parse; handle double-encoded JSON too
+    let parsed: any;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (err) {
+      // If parse fails, maybe it's double-encoded (string of JSON). Try again.
+      try {
+        parsed = JSON.parse(JSON.parse(raw));
+      } catch (err2) {
+        console.error("membersJson parse failed (double-parse attempt):", err2);
+        parsed = null;
+      }
+    }
 
-    if (members.length === 0) members = [{ name: '', rollNumber: '' }];
+    if (parsed) {
+      if (Array.isArray(parsed)) {
+        // case: [ { name: "...", rollNumber: "..." }, ... ]
+        members = parsed.map((m: any) => ({
+          name: m?.name ?? "",
+          rollNumber: m?.rollNumber ?? "",
+        }));
+      } else if (typeof parsed === "object") {
+        // case: { "Alice": "UCSMG-123", "Bob": "UCSMG-456" }
+        members = Object.entries(parsed).map(([name, rollNumber]) => ({
+          name: String(name ?? ""),
+          rollNumber: String(rollNumber ?? ""),
+        }));
+      } else {
+        console.warn("membersJson parsed to unexpected type:", typeof parsed, parsed);
+      }
+    }
   }
-} catch (e) {
-  console.error('Error parsing members:', e);
-  members = [{ name: '', rollNumber: '' }];
+} catch (error) {
+  console.error("Error parsing membersJson:", error);
+  members = [{ name: "", rollNumber: "" }];
 }
 
-        // Set form data with all fields
-        setFormData({
-          title: project.title || "",
-          description: project.description || "",
-          body: project.body || "",
-          benefits: project.benefits || "",
-          objectives : project.objectives || "",
-          githubLink: project.githubLink || "",
-          academic_year: project.academic_year || "",
-          student_year: project.student_year || "",
-          departmentId: project.departmentId?.toString() || "",
-          courseId: project.courseId?.toString() || "",
-          approvalStatus: "PENDING",
-          supervisorId: project.supervisorId?.toString() || "",
-          tags: project.tags || [],
-          members:
-            members.length > 0 ? members : [{ name: "", rollNumber: "" }],
-        });
+// then setFormData (replace the old members assignment there)
+setFormData({
+  title: project.title || "",
+  description: project.description || "",
+  body: project.body || "",
+  benefits: project.benefits || "",
+  objectives: project.objectives || "",
+  githubLink: project.githubLink || "",
+  academic_year: project.academic_year || "",
+  student_year: project.student_year || "",
+  departmentId: project.departmentId?.toString() || "",
+  courseId: project.courseId?.toString() || "",
+  approvalStatus: "PENDING",
+  supervisorId: project.supervisorId?.toString() || "",
+  tags: project.tags || [],
+  members: members.length > 0 ? members : [{ name: "", rollNumber: "" }],
+});
+
       } catch (error) {
         console.error("Failed to fetch project", error);
       } finally {
@@ -296,77 +320,82 @@ try {
   };
 
   // Submit (PUT)
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitMessage("");
+ // Submit (PUT)
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setSubmitMessage("");
 
+  try {
     const formDataToSubmit = new FormData();
 
-    // Append all string fields
+    // Append all string fields except members/tags
     Object.keys(formData).forEach((key) => {
       if (key !== "members" && key !== "tags") {
         const value = formData[key as keyof typeof formData];
-
         if (value !== undefined && value !== null && value !== "") {
           formDataToSubmit.append(key, String(value));
         }
       }
     });
 
-    // Filter out empty members before converting to JSON
+    // Build members map (frontend always sends map -> backend expects Map<String,String>)
     const validMembers = formData.members.filter(
       (member) => member.name || member.rollNumber
     );
 
-    // Convert valid members array to a Map<String, String> format for the backend
-    const membersMap = validMembers.reduce(
-      (map, member) => {
-        if (member.name) {
-          map[member.name] = member.rollNumber || "";
-        }
+    const membersMap: Record<string, string> = {};
+    validMembers.forEach((member) => {
+      if (member.name) {
+        // Trim the name to avoid accidental duplicates with whitespace
+        membersMap[member.name.trim()] = (member.rollNumber || "").trim();
+      }
+    });
 
-        return map;
-      },
-      {} as { [key: string]: string }
-    );
+    console.log(JSON.stringify(membersMap));
 
-    const membersJsonString = JSON.stringify(membersMap);
-
-    // Only append membersJson if there are valid members to send
-    if (validMembers.length > 0) {
-      formDataToSubmit.append("membersJson", membersJsonString);
+    if (Object.keys(membersMap).length > 0) {
+      formDataToSubmit.append("membersJson", JSON.stringify(membersMap));
     }
 
-    // Handle tags array - send as JSON string to avoid Spring binding issues
+    // Tags as JSON string (as you already did)
     if (formData.tags.length > 0) {
       formDataToSubmit.append("tagsJson", JSON.stringify(formData.tags));
     }
 
+    // Files
     projectFiles.forEach((file) => {
       formDataToSubmit.append("projectFiles", file);
     });
 
-    try {
-      const res = await api.put(`/projects/${id}`, formDataToSubmit, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    
+    const res = await api.put(`/projects/${id}`, formDataToSubmit);
 
-      if (res.status === 200) {
-        setSubmitMessage("Project updated successfully!");
-        navigate(`/projects/${id}`);
-      } else {
-        setSubmitMessage(`Failed: ${res.statusText}`);
-      }
-    } catch (error: any) {
-      setSubmitMessage(
-        error.response?.data || "Failed to update project. Try again."
-      );
-      console.error("Update error:", error);
-    } finally {
-      setIsSubmitting(false);
+    if (res.status === 200 || res.status === 204) {
+      setSubmitMessage("Project updated successfully!");
+      // navigate to project page (200 returns may include data)
+      navigate(`/projects/${id}`);
+    } else {
+      setSubmitMessage(`Failed: ${res.statusText || res.status}`);
     }
-  };
+  } catch (error: any) {
+    console.error("Update error:", error);
+    // Normalize error message visibility
+    if (error?.response?.data) {
+      // If backend returns structured error
+      setSubmitMessage(
+        error.response.data.message || JSON.stringify(error.response.data)
+      );
+    } else if (error?.message) {
+      setSubmitMessage(error.message);
+    } else {
+      setSubmitMessage("Failed to update project. Try again.");
+    }
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   // Quill toolbar
   const modules = useMemo(

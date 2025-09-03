@@ -10,7 +10,7 @@ export const useSupervisors = () => {
     queryKey: ["supervisors"],
     queryFn: async () => {
       // Because the backend returns List<User>, the axios response.data will be the array.
-      const { data } = await api.get("users/supervisors");
+      const { data } = await api.get("/users/supervisors-and-admins");
 
       console.table(data);
 

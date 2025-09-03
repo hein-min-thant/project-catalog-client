@@ -59,6 +59,13 @@ export default function ProjectDetailPage() {
     queryFn: async () => (await api.get("/users/me")).data,
   });
   
+  // Add query to fetch the user who submitted the project
+const { data: submittedUser } = useQuery({
+  queryKey: ["user", project?.userId],
+  queryFn: async () =>
+    (await api.get(`/users/${project?.userId}`)).data,
+  enabled: !!project?.userId,
+});
   // Remove category query and add department/course queries
   const { data: department } = useQuery({
     queryKey: ["department", project?.departmentId],
@@ -294,7 +301,12 @@ export default function ProjectDetailPage() {
                             >
                               {project.approvalStatus}
                             </Badge>
-
+                            {submittedUser && (
+  <p className="text-sm text-default-600 flex items-center gap-2">
+  
+    Submitted by: {submittedUser.name}
+  </p>
+)}
                             {project.supervisorName && (
                               <p className="text-sm text-default-600 flex items-center gap-2">
                                 Supervisor: {project.supervisorName} {project.supervisorName == "Project Catalog" ? <Icon color="primary" icon="mdi:check-decagram"></Icon> : ""}
