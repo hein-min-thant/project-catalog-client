@@ -60,8 +60,7 @@ export function ProjectFilters({
         { key: "Semester VII", label: "Semester VII" },
         { key: "Semester VIII", label: "Semester VIII" },
         { key: "Semester IX", label: "Semester IX" },
-        { key: "Internship", label: "Internship" },
-        { key: "Final Project", label: "Final Project" },
+        { key: "Semester X", label: "Semester X" },
       ],
       categories: [
         { key: "1", label: "Web Development" },
@@ -167,7 +166,7 @@ export function ProjectFilters({
             </label>
             <Input
               className="w-full bg-background/80 border-cyan-200 dark:border-cyan-800 focus:border-cyan-500 focus:ring-cyan-500/20 transition-all duration-300"
-              placeholder="e.g., react, spring, ai"
+              placeholder="e.g., html, css, javacript"
               value={filters.tags}
               onChange={(e) => onFilterChange("tags", e.target.value)}
             />

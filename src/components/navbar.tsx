@@ -55,10 +55,11 @@ export const Navbar = () => {
           const { data } = await api.get("/users/me");
 
           setUser(data);
-        } catch (error) {
-          // If token is invalid, user will be redirected to login
-          localStorage.removeItem("jwt");
-          setUser(null);
+        } catch (error : any) {
+            if (error.response && error.response.status === 401) {
+              localStorage.removeItem("jwt");
+              setUser(null);
+            }
         }
       }
     };

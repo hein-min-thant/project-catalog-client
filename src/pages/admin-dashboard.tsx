@@ -778,6 +778,23 @@ export default function AdminDashboardPage() {
           <TabsContent className="space-y-6" value="departments">
             <DepartmentsCoursesManagement />
           </TabsContent>
+
+          {/* Analytics Tab - Under Construction */}
+          <TabsContent className="space-y-6" value="analytics">
+            <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/50 dark:to-orange-950/50 border-yellow-200/50 dark:border-yellow-800/50">
+              <CardContent className="p-12 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 bg-yellow-100 dark:bg-yellow-900/50 rounded-full flex items-center justify-center">
+                  <Icon className="w-8 h-8 text-yellow-500" icon="mdi:tools" />
+                </div>
+                <h3 className="text-2xl font-bold mb-2 text-yellow-600 dark:text-yellow-400">
+                  Analytics Under Construction
+                </h3>
+                <p className="text-yellow-600/80 dark:text-yellow-300/80 mb-4">
+                  This section is coming soon. Please check back later!
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
 
         {/* Dialogs (unchanged) */}

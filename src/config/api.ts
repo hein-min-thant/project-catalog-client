@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://project-catalog-codeaholics.onrender.com",
+  baseURL: "http://localhost:8080",
 });
 
 api.interceptors.request.use((config) => {
