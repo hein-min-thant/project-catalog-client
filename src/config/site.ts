@@ -17,7 +17,7 @@ export const siteConfig = {
       href: "/supervisor-dashboard",
     },
     {
-      label: "Admim",
+      label: "Admin",
       href: "/admin-dashboard",
     },
   ],
