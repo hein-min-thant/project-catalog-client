@@ -65,8 +65,6 @@ function isTokenExpired(token: any) {
     return true;
   }
 
-  // The 'exp' claim is in Unix time (seconds).
-  // Date.now() returns milliseconds, so we need to convert.
   const currentTime = Date.now() / 1000;
 
   return payload.exp < currentTime;

@@ -46,6 +46,7 @@ export const Navbar = () => {
     email: string;
     avatarUrl?: string;
     bio?: string;
+    is_active: boolean;
   } | null>(null);
 
   useEffect(() => {
@@ -53,13 +54,16 @@ export const Navbar = () => {
       if (isAuthenticated()) {
         try {
           const { data } = await api.get("/users/me");
-
+          if (data.is_active == false) {
+            localStorage.removeItem("jwt");
+            setUser(null);
+          }
           setUser(data);
-        } catch (error : any) {
-            if (error.response && error.response.status === 401) {
-              localStorage.removeItem("jwt");
-              setUser(null);
-            }
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            localStorage.removeItem("jwt");
+            setUser(null);
+          }
         }
       }
     };
